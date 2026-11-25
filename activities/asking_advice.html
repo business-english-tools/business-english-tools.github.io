@@ -1,0 +1,359 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Advice Party</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@500;700;800&display=swap">
+<style>
+/* Layout: phone-first game screens (home, chat fixer, guess the problem). One committed bright look in both themes. */
+:root{
+  --bg:#eef4ff; --surface:#ffffff; --ink:#1f1a3d; --muted:#5d5880; --line:#dcd9f0;
+  --coral:#ff6b6b; --sun:#ffc93c; --teal:#22b8a7; --grape:#7b5cfa; --pink:#ff7eb9; --sky:#3a86ff;
+  --good:#16a34a; --bad:#e5484d;
+  --display:"Baloo 2","Trebuchet MS",system-ui,sans-serif;
+  --body:"Nunito","Segoe UI",system-ui,sans-serif;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{background:var(--bg)}
+body{margin:0;color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.45;overflow-x:hidden}
+.wrap{max-width:640px;margin:0 auto;padding-block:16px 40px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+button{font-family:var(--body);cursor:pointer}
+button:focus-visible,input:focus-visible{outline:3px solid var(--grape);outline-offset:2px}
+.big{font:800 1.15rem var(--body);border:0;border-radius:18px;padding:16px 22px;color:#fff;background:var(--grape);
+  box-shadow:0 5px 0 rgba(31,26,61,.25);transition:transform .08s}
+.big:active{transform:translateY(3px);box-shadow:0 2px 0 rgba(31,26,61,.25)}
+.big.sun{background:var(--sun);color:var(--ink)} .big.coral{background:var(--coral)} .big.teal{background:var(--teal)}
+.big:disabled{opacity:.45;cursor:default}
+.ghost{font:700 .95rem var(--body);border:2px solid var(--line);background:var(--surface);color:var(--muted);border-radius:14px;padding:10px 16px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px}
+.back{font:800 .95rem var(--body);border:0;background:var(--surface);color:var(--ink);border-radius:999px;padding:8px 14px;box-shadow:0 2px 0 var(--line)}
+h1,h2{font-family:var(--display);line-height:1;margin:0}
+.title{text-align:center;padding:10px 0 4px}
+.title .kick{font-weight:800;color:var(--grape);letter-spacing:.12em;text-transform:uppercase;font-size:.8rem}
+.title h1{font-size:clamp(2.6rem,12vw,3.8rem);font-weight:800;margin-top:4px}
+.title h1 span:nth-child(1){color:var(--coral)} .title h1 span:nth-child(2){color:var(--sky)}
+.title p{color:var(--muted);margin:6px 0 0;font-weight:700}
+.bubbles{display:flex;justify-content:center;gap:10px;margin:14px 0 4px}
+.bubbles i{font-style:normal;font-family:var(--display);font-weight:800;color:#fff;padding:6px 14px;border-radius:18px 18px 18px 4px;font-size:1rem}
+.bubbles i:nth-child(1){background:var(--teal);transform:rotate(-4deg)}
+.bubbles i:nth-child(2){background:var(--pink);transform:rotate(3deg);border-radius:18px 18px 4px 18px}
+.modes{display:grid;gap:14px;margin-top:18px}
+.mode{display:grid;grid-template-columns:76px minmax(0,1fr);gap:14px;align-items:center;text-align:left;border:0;border-radius:24px;padding:18px;color:#fff;
+  box-shadow:0 6px 0 rgba(31,26,61,.2)}
+.mode:active{transform:translateY(3px)}
+.mode.m1{background:var(--sky)} .mode.m2{background:var(--coral)}
+.mode .ico{width:76px;height:76px;border-radius:20px;background:rgba(255,255,255,.22);display:grid;place-items:center;font-size:2.4rem}
+.mode h2{font-size:1.7rem;font-weight:800}
+.mode p{margin:2px 0 0;font-weight:700;opacity:.95}
+.mode small{display:inline-block;margin-top:6px;background:rgba(255,255,255,.25);border-radius:999px;padding:2px 10px;font-weight:800;font-size:.8rem}
+/* order game */
+.hud{display:flex;gap:8px;align-items:center}
+.pill{background:var(--surface);border-radius:999px;padding:6px 12px;font-weight:800;box-shadow:0 2px 0 var(--line);font-variant-numeric:tabular-nums}
+.hearts{letter-spacing:2px;font-size:1.1rem}
+.scene{background:var(--surface);border-radius:22px;padding:14px;box-shadow:0 4px 0 var(--line);margin-bottom:14px}
+.scene h2{font-size:1.35rem;font-weight:800;color:var(--grape)}
+.scene p{margin:2px 0 0;color:var(--muted);font-weight:700}
+.chat{display:flex;flex-direction:column;gap:8px;min-height:60px;margin-bottom:14px}
+.msg{max-width:85%;padding:10px 14px;border-radius:20px;font-weight:700;animation:pop .28s ease-out}
+.msg b{display:block;font-size:.78rem;letter-spacing:.06em;text-transform:uppercase;opacity:.85}
+.msg.l{align-self:flex-start;background:var(--sky);color:#fff;border-bottom-left-radius:6px}
+.msg.r{align-self:flex-end;background:var(--sun);color:var(--ink);border-bottom-right-radius:6px}
+.hint{text-align:center;color:var(--muted);font-weight:800;margin:4px 0 10px}
+.choices{display:flex;flex-direction:column;gap:8px}
+.choice{display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px;align-items:center;text-align:left;font:700 1rem var(--body);
+  border:2px solid var(--line);background:var(--surface);color:var(--ink);border-radius:16px;padding:12px 14px}
+.choice .who{font:800 .78rem var(--body);letter-spacing:.06em;text-transform:uppercase;color:#fff;border-radius:999px;padding:3px 9px}
+.choice.shake{animation:shake .4s;border-color:var(--bad);background:#fff0f0}
+@keyframes pop{0%{transform:scale(.6);opacity:0}80%{transform:scale(1.05)}100%{transform:scale(1);opacity:1}}
+@keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-8px)}40%,80%{transform:translateX(8px)}}
+.panel{background:var(--surface);border-radius:26px;padding:24px 18px;text-align:center;box-shadow:0 5px 0 var(--line);animation:pop .35s ease-out}
+.panel h2{font-size:2.2rem;font-weight:800}
+.stars{font-size:3rem;letter-spacing:6px;margin:6px 0}
+.stars .off{filter:grayscale(1);opacity:.3}
+.panel p{color:var(--muted);font-weight:700;margin:4px 0 16px}
+.btns{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
+.levels{display:grid;gap:10px}
+.level{display:grid;grid-template-columns:52px minmax(0,1fr) auto;gap:12px;align-items:center;text-align:left;border:0;border-radius:20px;padding:14px;background:var(--surface);color:var(--ink);box-shadow:0 4px 0 var(--line)}
+.level .n{width:52px;height:52px;border-radius:16px;display:grid;place-items:center;font:800 1.5rem var(--display);color:#fff}
+.level h3{margin:0;font-family:var(--display);font-size:1.25rem}
+.level p{margin:0;color:var(--muted);font-weight:700;font-size:.92rem}
+.level .got{font-size:1.1rem;letter-spacing:1px;white-space:nowrap}
+/* shared */
+.center{display:flex;justify-content:center;gap:10px;flex-wrap:wrap}
+.float{position:fixed;left:50%;top:40%;transform:translate(-50%,-50%);font:800 3rem var(--display);color:var(--good);pointer-events:none;animation:rise 1s ease-out forwards;z-index:30;text-shadow:0 3px 0 #fff}
+@keyframes rise{0%{opacity:0;transform:translate(-50%,-30%) scale(.6)}20%{opacity:1;transform:translate(-50%,-50%) scale(1.15)}100%{opacity:0;transform:translate(-50%,-120%) scale(1)}}
+.qbar{height:10px;background:var(--surface);border-radius:99px;overflow:hidden;margin-bottom:14px;box-shadow:inset 0 0 0 2px var(--line)}
+.qbar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--coral),var(--sun),var(--teal));border-radius:99px;transition:width .4s}
+.qhead{display:flex;justify-content:space-between;align-items:center;font:800 1.1rem var(--display);margin-bottom:8px}
+.streak{color:var(--coral)}
+.friend{display:flex;align-items:center;gap:8px;color:var(--muted);font-weight:800;margin-bottom:8px}
+.friend .av{width:38px;height:38px;border-radius:50%;background:var(--sun);display:grid;place-items:center;font-size:1.3rem}
+.ghost small{font-weight:700;opacity:.8}
+.choice.right{border-color:var(--good);background:#e9f9ef}
+.choice.dim{opacity:.45}
+.choice:disabled{cursor:default}
+.fb{border-radius:18px;padding:12px 14px;margin-top:12px;font-weight:800;animation:pop .3s}
+.fb.ok{background:#e9f9ef;color:#13612f} .fb.no{background:#fff0f0;color:#9b1c1f}
+.fb .sayit{display:block;font-weight:700;color:var(--ink);margin-top:4px}
+#confetti{position:fixed;inset:0;pointer-events:none;z-index:40}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<canvas id="confetti" aria-hidden="true"></canvas>
+<div class="wrap">
+
+  <!-- HOME -->
+  <section id="home">
+    <div class="title">
+      <div class="kick">Asking for advice</div>
+      <h1><span>Advice</span> <span>Party</span></h1>
+      <div class="bubbles"><i>What should I do?</i><i>Why don't you…?</i></div>
+      <p>Choose a game. One phone for two players.</p>
+    </div>
+    <div class="modes">
+      <button class="mode m1" data-go="levels"><span class="ico">💬</span><span><h2>Chat Fixer</h2><p>Build the conversation. Don't lose your hearts!</p><small>1 player · 3 levels</small></span></button>
+      <button class="mode m2" data-go="guess"><span class="ico">🕵️</span><span><h2>Guess the Problem</h2><p>Read the advice. What's the problem?</p><small>1 player · 10 questions</small></span></button>
+    </div>
+  </section>
+
+  <!-- LEVELS -->
+  <section id="levels" hidden>
+    <div class="top"><button class="back" data-go="home">← Home</button><span class="pill">Chat Fixer</span></div>
+    <div class="levels" id="levelList"></div>
+  </section>
+
+  <!-- ORDER GAME -->
+  <section id="order" hidden>
+    <div class="top"><button class="back" data-go="levels">← Levels</button>
+      <div class="hud"><span class="pill hearts" id="hearts"></span><span class="pill" id="timer">0:00</span></div></div>
+    <div class="scene"><h2 id="sceneTitle"></h2><p id="sceneSub"></p></div>
+    <div class="chat" id="chat"></div>
+    <div id="playArea">
+      <div class="hint">What comes next? Tap it!</div>
+      <div class="choices" id="choices"></div>
+    </div>
+    <div id="orderEnd"></div>
+  </section>
+
+  <!-- GUESS GAME -->
+  <section id="guess" hidden>
+    <div class="top"><button class="back" data-go="home">← Home</button>
+      <div class="hud"><span class="pill hearts" id="gHearts"></span><span class="pill" id="gScore">0</span></div></div>
+    <div class="qbar"><i id="gBar"></i></div>
+    <div id="gPlay">
+      <div class="qhead"><span id="gNum"></span><span class="streak" id="gStreak"></span></div>
+      <div class="friend"><span class="av">🧑‍💼</span><span>Your friend gives you advice…</span></div>
+      <div class="chat" id="gChat"></div>
+      <div class="center" style="margin-bottom:12px"><button class="ghost" id="gClue">💡 Another clue <small>(fewer points)</small></button></div>
+      <div class="hint">What was your problem?</div>
+      <div class="choices" id="gChoices"></div>
+      <div id="gFb"></div>
+    </div>
+    <div id="gEnd"></div>
+  </section>
+</div>
+
+<script>
+/* ---------- data ---------- */
+const LEVELS = [
+  {title:"Emails from Korea", sub:"Huy asks Lan for advice.", a:"Huy", b:"Lan", lines:[
+    ["Huy","Hi Lan. Can I ask your advice?"],["Lan","Sure. What's the problem?"],
+    ["Huy","My partner in Korea doesn't reply to my emails."],["Lan","Oh no. How long?"],
+    ["Huy","One week. What should I do?"],["Lan","Maybe you could call him."],
+    ["Huy","Hmm, I'm not sure. His English isn't very good."],["Lan","Why don't you send a short email with one question?"],
+    ["Huy","Good idea. Thanks, Lan!"],["Lan","No problem."]]},
+  {title:"The late shipment", sub:"Mai asks Tuấn for advice.", a:"Mai", b:"Tuấn", lines:[
+    ["Mai","Hi Tuấn. Can I ask your advice?"],["Tuấn","Sure. What's the problem?"],
+    ["Mai","The shipment to Singapore is late."],["Tuấn","Oh no. How late?"],
+    ["Mai","Three days. What should I do?"],["Tuấn","Why don't you call the customer?"],
+    ["Mai","OK, I'll try that. What should I say?"],["Tuấn","Maybe you could say sorry and give a new date."],
+    ["Mai","Good idea. Thanks, Tuấn!"],["Tuấn","No problem."]]},
+  {title:"Video call with Sydney", sub:"Long asks Thu for advice.", a:"Long", b:"Thu", lines:[
+    ["Long","Hi Thu. Can I ask your advice?"],["Thu","Of course. What's wrong?"],
+    ["Long","I have a video call with Sydney tomorrow."],["Thu","Great! What time?"],
+    ["Long","Nine a.m. Is that OK?"],["Thu","Yes. It's one p.m. in Sydney. That's fine."],
+    ["Long","Should I wear a suit?"],["Thu","I don't think so. How about a nice shirt?"],
+    ["Long","Good idea. Thanks, Thu!"],["Thu","You're welcome."]]},
+];
+const PROBLEMS = [
+  "My partner in Korea doesn't reply to my emails.","I have too many meetings.",
+  "I don't understand my Australian partner on the phone.","The shipment is late.",
+  "I'm always tired after business trips.","My Chinese partner wants a lower price.",
+  "I have a video call with Sydney, but I don't know the time there.","My computer is very slow.",
+  "I forget my partners' names.","My Singapore partner is visiting next week.",
+  "I'm late for work every day.","My English emails are too long.",
+  "My boss is always angry.","I can't find a hotel in Seoul.",
+  "My British partner wants a meeting on Sunday.","I have a presentation in English tomorrow.",
+];
+const COLORS = ["#ff6b6b","#ffc93c","#22b8a7","#7b5cfa","#ff7eb9","#3a86ff"];
+const shuf=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+let best={}; try{best=JSON.parse(localStorage.getItem('advice-party-stars')||'{}')}catch(e){}
+
+/* ---------- navigation ---------- */
+const SCREENS=['home','levels','order','guess'];
+function show(id){SCREENS.forEach(s=>$(s).hidden=s!==id);if(id==='guess')startGuess();window.scrollTo(0,0);if(id==='levels')renderLevels();if(id!=='order')stopTimer()}
+document.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>show(b.dataset.go));
+
+/* ---------- confetti ---------- */
+const cv=$('confetti'),cx=cv.getContext('2d');let parts=[],raf=null;
+function confetti(n=140){
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+  cv.width=innerWidth;cv.height=innerHeight;
+  for(let i=0;i<n;i++)parts.push({x:Math.random()*cv.width,y:-20-Math.random()*cv.height*.4,vx:(Math.random()-.5)*3,vy:2+Math.random()*3.5,r:Math.random()*6.28,vr:(Math.random()-.5)*.25,s:6+Math.random()*7,c:COLORS[i%6]});
+  if(!raf)tick();
+}
+function tick(){
+  cx.clearRect(0,0,cv.width,cv.height);
+  parts.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.vy+=.04;p.r+=p.vr;cx.save();cx.translate(p.x,p.y);cx.rotate(p.r);cx.fillStyle=p.c;cx.fillRect(-p.s/2,-p.s/4,p.s,p.s/2);cx.restore()});
+  parts=parts.filter(p=>p.y<cv.height+30);
+  raf=parts.length?requestAnimationFrame(tick):(cx.clearRect(0,0,cv.width,cv.height),null);
+}
+function floatText(t,color){const d=document.createElement('div');d.className='float';d.textContent=t;if(color)d.style.color=color;document.body.appendChild(d);setTimeout(()=>d.remove(),1000)}
+
+/* ---------- Chat Fixer ---------- */
+const LCOL=['var(--sky)','var(--coral)','var(--teal)'];
+function starStr(n){return [0,1,2].map(i=>i<n?'⭐':'<span class="off">⭐</span>').join('')}
+function renderLevels(){
+  $('levelList').innerHTML=LEVELS.map((L,i)=>`<button class="level" data-l="${i}"><span class="n" style="background:${LCOL[i]}">${i+1}</span>
+    <span><h3>${esc(L.title)}</h3><p>${esc(L.sub)}</p></span><span class="got">${starStr(best[i]||0)}</span></button>`).join('');
+  $('levelList').querySelectorAll('.level').forEach(b=>b.onclick=()=>startLevel(+b.dataset.l));
+}
+let G={},timerId=null;
+function stopTimer(){clearInterval(timerId);timerId=null}
+function startLevel(li){
+  const L=LEVELS[li];
+  G={li,L,step:0,hearts:3,mistakes:0,t0:Date.now()};
+  $('sceneTitle').textContent=`Level ${li+1}: ${L.title}`;$('sceneSub').textContent=L.sub;
+  $('chat').innerHTML='';$('orderEnd').innerHTML='';$('playArea').hidden=false;
+  show('order');stopTimer();
+  timerId=setInterval(()=>{const s=Math.floor((Date.now()-G.t0)/1000);$('timer').textContent=`${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`},250);
+  $('timer').textContent='0:00';
+  renderOrder();
+}
+function renderOrder(){
+  const L=G.L;
+  $('hearts').innerHTML='❤️'.repeat(G.hearts)+'<span style="opacity:.25">❤️</span>'.repeat(3-G.hearts);
+  const left=L.lines.map((_,i)=>i).slice(G.step);
+  // show up to 4 options: the correct next line + random others still left
+  const opts=shuf([G.step,...shuf(left.filter(i=>i!==G.step)).slice(0,3)]);
+  $('choices').innerHTML=opts.map(i=>{const [w,t]=L.lines[i];return `<button class="choice" data-i="${i}"><span class="who" style="background:${w===L.a?'var(--sky)':'var(--sun)'};color:${w===L.a?'#fff':'var(--ink)'}">${esc(w)}</span><span>${esc(t)}</span></button>`}).join('');
+  $('choices').querySelectorAll('.choice').forEach(b=>b.onclick=()=>pick(b,+b.dataset.i));
+}
+function pick(btn,i){
+  const L=G.L;
+  if(i===G.step){
+    const [w,t]=L.lines[i];
+    const m=document.createElement('div');m.className='msg '+(w===L.a?'l':'r');m.innerHTML=`<b>${esc(w)}</b>${esc(t)}`;$('chat').appendChild(m);
+    G.step++;
+    if(G.step>=L.lines.length)return finishLevel(true);
+    renderOrder();
+    m.scrollIntoView({block:'nearest',behavior:'smooth'});
+  }else{
+    G.hearts--;G.mistakes++;
+    btn.classList.remove('shake');void btn.offsetWidth;btn.classList.add('shake');
+    $('hearts').innerHTML='❤️'.repeat(G.hearts)+'<span style="opacity:.25">❤️</span>'.repeat(3-G.hearts);
+    if(G.hearts<=0)setTimeout(()=>finishLevel(false),450);
+  }
+}
+function finishLevel(win){
+  stopTimer();$('playArea').hidden=true;
+  const s=Math.floor((Date.now()-G.t0)/1000), time=`${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`;
+  const stars=win?3-G.mistakes:0;
+  if(win&&stars>(best[G.li]||0)){best[G.li]=stars;try{localStorage.setItem('advice-party-stars',JSON.stringify(best))}catch(e){}}
+  const more=G.li<LEVELS.length-1;
+  $('orderEnd').innerHTML=win
+    ? `<div class="panel"><h2 style="color:var(--teal)">${stars===3?'Perfect!':'Well done!'}</h2><div class="stars">${starStr(stars)}</div>
+       <p>Time: ${time}. Now read the conversation with your partner!</p>
+       <div class="btns"><button class="big sun" id="again">Play again</button>${more?'<button class="big" id="nextL">Next level →</button>':'<button class="big coral" data-go2="guess">Guess the Problem →</button>'}</div></div>`
+    : `<div class="panel"><h2 style="color:var(--coral)">Oh no!</h2><div class="stars">💔</div><p>No more hearts. Try again!</p>
+       <div class="btns"><button class="big coral" id="again">Try again</button></div></div>`;
+  $('again').onclick=()=>startLevel(G.li);
+  if($('nextL'))$('nextL').onclick=()=>startLevel(G.li+1);
+  document.querySelectorAll('[data-go2]').forEach(b=>b.onclick=()=>show(b.dataset.go2));
+  if(win)confetti(stars===3?180:90);
+  $('orderEnd').scrollIntoView({behavior:'smooth',block:'center'});
+}
+
+/* ---------- Guess the Problem ---------- */
+const ADVICE = {
+  "My partner in Korea doesn't reply to my emails.":["Maybe you could call him.","Why don't you send a short email with one question?"],
+  "I have too many meetings.":["Why don't you say no to some meetings?","How about shorter meetings?"],
+  "I don't understand my Australian partner on the phone.":["Maybe you could ask him to speak slowly.","Why don't you send an email after the call?"],
+  "The shipment is late.":["Why don't you call the supplier?","Maybe you could tell the customer the new date."],
+  "I'm always tired after business trips.":["You should sleep more on the plane.","How about a day off after the trip?"],
+  "My Chinese partner wants a lower price.":["Maybe you could explain the quality.","How about a small discount?"],
+  "I have a video call with Sydney, but I don't know the time there.":["Why don't you check a world clock?","Maybe you could ask your partner in Australia."],
+  "My computer is very slow.":["Why don't you restart it?","Maybe you could call IT."],
+  "I forget my partners' names.":["Why don't you write them down?","Maybe you could keep their business cards."],
+  "My Singapore partner is visiting next week.":["Maybe you could book a hotel for him.","How about dinner in District 1?"],
+  "I'm late for work every day.":["Why don't you leave home earlier?","Maybe you could go to bed early."],
+  "My English emails are too long.":["How about short sentences?","Maybe you could use bullet points."],
+  "My boss is always angry.":["Maybe you could ask him what's wrong.","Why don't you finish your work early?"],
+  "I can't find a hotel in Seoul.":["Why don't you ask your Korean partner?","How about a hotel near the office?"],
+  "My British partner wants a meeting on Sunday.":["Maybe you could ask for Monday.","Why don't you tell him Sunday is your family day?"],
+  "I have a presentation in English tomorrow.":["Why don't you practise tonight?","Maybe you could practise with a friend."],
+};
+const KEYS=Object.keys(ADVICE), NQ=10;
+let Q={};
+function hearts(n){return '❤️'.repeat(n)+'<span style="opacity:.25">❤️</span>'.repeat(3-n)}
+function startGuess(){
+  Q={list:shuf(KEYS).slice(0,NQ),i:0,score:0,hearts:3,streak:0,right:0};
+  $('gEnd').innerHTML='';$('gPlay').hidden=false;nextQ();
+}
+function nextQ(){
+  if(Q.i>=NQ||Q.hearts<=0)return endGuess();
+  const prob=Q.list[Q.i];Q.clue=false;Q.done=false;
+  $('gNum').textContent=`Question ${Q.i+1} / ${NQ}`;
+  $('gStreak').textContent=Q.streak>=2?`🔥 ${Q.streak} in a row!`:'';
+  $('gBar').style.width=(Q.i/NQ*100)+'%';
+  $('gHearts').innerHTML=hearts(Q.hearts);$('gScore').textContent='⭐ '+Q.score;
+  $('gChat').innerHTML=bubble(ADVICE[prob][0]);
+  $('gClue').hidden=false;$('gClue').onclick=()=>{if(Q.done)return;Q.clue=true;$('gChat').insertAdjacentHTML('beforeend',bubble(ADVICE[prob][1]));$('gClue').hidden=true};
+  const opts=shuf([prob,...shuf(KEYS.filter(k=>k!==prob)).slice(0,2)]);
+  $('gChoices').innerHTML=opts.map(o=>`<button class="choice" data-p="${esc(o)}"><span class="who" style="background:var(--grape)">Me</span><span>${esc(o)}</span></button>`).join('');
+  $('gChoices').querySelectorAll('.choice').forEach(b=>b.onclick=()=>answer(b,prob));
+  $('gFb').innerHTML='';
+}
+function bubble(t){return `<div class="msg r"><b>Friend</b>${esc(t)}</div>`}
+function answer(btn,prob){
+  if(Q.done)return;
+  const ok=btn.dataset.p===prob;
+  if(ok){
+    Q.done=true;Q.right++;Q.streak++;
+    const pts=(Q.clue?1:2)+(Q.streak>=3?1:0);Q.score+=pts;
+    floatText('+'+pts+' ⭐');if(Q.streak===3||Q.streak===6)confetti(80);
+    $('gChoices').querySelectorAll('.choice').forEach(b=>{b.disabled=true;b.classList.add(b===btn?'right':'dim')});
+    $('gClue').hidden=true;
+    $('gFb').innerHTML=`<div class="fb ok">Yes! ${Q.streak>=3?'🔥 Streak bonus!':''}<span class="sayit">Now say it out loud: "${esc(prob)} What should I do?"</span></div>
+      <div class="center" style="margin-top:12px"><button class="big" id="gNext">${Q.i+1>=NQ?'See my score':'Next →'}</button></div>`;
+    $('gNext').onclick=()=>{Q.i++;nextQ()};
+  }else{
+    Q.hearts--;Q.streak=0;$('gStreak').textContent='';
+    btn.disabled=true;btn.classList.remove('shake');void btn.offsetWidth;btn.classList.add('shake');
+    $('gHearts').innerHTML=hearts(Q.hearts);
+    if(Q.hearts<=0){Q.done=true;setTimeout(endGuess,500);return}
+    $('gFb').innerHTML=`<div class="fb no">Not this one. Try again!</div>`;
+  }
+}
+function endGuess(){
+  $('gPlay').hidden=true;$('gBar').style.width='100%';
+  const lost=Q.hearts<=0, stars=lost?0:Q.right>=10?3:Q.right>=8?2:1;
+  if(stars>(best.guess||0)){best.guess=stars;try{localStorage.setItem('advice-party-stars',JSON.stringify(best))}catch(e){}}
+  $('gEnd').innerHTML=lost
+    ? `<div class="panel"><h2 style="color:var(--coral)">Oh no!</h2><div class="stars">💔</div><p>No more hearts. You got ${Q.right} right. Try again!</p><div class="btns"><button class="big coral" id="gAgain">Try again</button></div></div>`
+    : `<div class="panel"><h2 style="color:var(--teal)">${stars===3?'Detective!':'Well done!'}</h2><div class="stars">${starStr(stars)}</div>
+       <p>${Q.right} / ${NQ} correct · ⭐ ${Q.score} points</p><div class="btns"><button class="big sun" id="gAgain">Play again</button><button class="big" data-go4="home">Home</button></div></div>`;
+  $('gAgain').onclick=startGuess;
+  document.querySelectorAll('[data-go4]').forEach(b=>b.onclick=()=>show('home'));
+  if(!lost)confetti(stars===3?200:100);
+}
+</script>
+</body>
+</html>
