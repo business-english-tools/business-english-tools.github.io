@@ -11,42 +11,111 @@
 <div class="wrap">
 
   <header>
-    <h1>Business English Activities</h1>
-    <p>Tap an activity to start.</p>
+    <div>
+      <h1>Business English Activities</h1>
+      <p>Tap an activity to start. Tap <span class="qr-inline" aria-hidden="true">▦</span> to show its QR code.</p>
+    </div>
+    <button class="qr-btn hub" data-url="./" data-name="Business English Activities" aria-label="Show QR code for this page">▦ <span>QR</span></button>
   </header>
 
   <main class="grid">
 
-    <!-- ACTIVITY: copy one <a class="tile ..."> block to add a new activity -->
-    <a class="tile teal" href="https://business-english-tools.github.io/company-cards/">
-      <span class="icon" aria-hidden="true">🏢</span>
-      <h2>Company Cards</h2>
-      <p>Ask and answer about companies</p>
-    </a>
+    <!-- ACTIVITY TILE: copy one <div class="tile ..."> block to add a new activity.
+         Change the colour class, the link (href), the icon, the name and the short line. -->
 
-    <a class="tile amber" href="https://business-english-tools.github.io/meeting-planner/">
-      <span class="icon" aria-hidden="true">🌍</span>
-      <h2>World Meeting Planner</h2>
-      <p>Find a time that works for everyone</p>
-    </a>
-
-    <!-- COMING SOON placeholders: replace with real activities later -->
-    <div class="tile soon">
-      <span class="icon" aria-hidden="true">✨</span>
-      <h2>Coming soon</h2>
-      <p>New activity</p>
+    <div class="tile teal">
+      <a class="tile-link" href="https://business-english-tools.github.io/company-cards/">
+        <span class="icon" aria-hidden="true">🏢</span>
+        <h2>Company Cards</h2>
+        <p>Ask and answer about companies</p>
+      </a>
+      <button class="qr-btn" aria-label="Show QR code for Company Cards">▦</button>
     </div>
 
-    <div class="tile soon">
-      <span class="icon" aria-hidden="true">✨</span>
-      <h2>Coming soon</h2>
-      <p>New activity</p>
+    <div class="tile amber">
+      <a class="tile-link" href="https://business-english-tools.github.io/meeting-planner/">
+        <span class="icon" aria-hidden="true">🌍</span>
+        <h2>World Meeting Planner</h2>
+        <p>Find a time that works for everyone</p>
+      </a>
+      <button class="qr-btn" aria-label="Show QR code for World Meeting Planner">▦</button>
+    </div>
+
+    <div class="tile sky">
+      <a class="tile-link" href="activities/office_vocabulary.html">
+        <span class="icon" aria-hidden="true">💼</span>
+        <h2>What Do You Do at Work?</h2>
+        <p>Work actions: guess, speak, quiz</p>
+      </a>
+      <button class="qr-btn" aria-label="Show QR code for What Do You Do at Work?">▦</button>
+    </div>
+
+    <div class="tile rose">
+      <a class="tile-link" href="activities/asking_advice.html">
+        <span class="icon" aria-hidden="true">💬</span>
+        <h2>Advice Party</h2>
+        <p>Ask for and give advice</p>
+      </a>
+      <button class="qr-btn" aria-label="Show QR code for Advice Party">▦</button>
     </div>
 
   </main>
 
   <footer>More activities are being added.</footer>
-
 </div>
+
+<!-- QR pop-up -->
+<div class="qr-overlay" id="qrOverlay" hidden>
+  <div class="qr-card" role="dialog" aria-modal="true" aria-labelledby="qrName">
+    <button class="qr-close" id="qrClose" aria-label="Close">✕</button>
+    <h2 id="qrName"></h2>
+    <div class="qr-box" id="qrBox"></div>
+    <p class="qr-url" id="qrUrl"></p>
+    <p class="qr-tip">Scan with your phone camera</p>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
+<script>
+  const overlay = document.getElementById('qrOverlay');
+  const box = document.getElementById('qrBox');
+  let lastBtn = null;
+
+  function openQR(url, name, btn) {
+    const full = new URL(url, location.href).href;
+    document.getElementById('qrName').textContent = name;
+    document.getElementById('qrUrl').textContent = full.replace(/^https?:\/\//, '');
+    try {
+      const qr = qrcode(0, 'M');
+      qr.addData(full);
+      qr.make();
+      box.innerHTML = qr.createSvgTag({ cellSize: 8, margin: 2, scalable: true });
+    } catch (e) {
+      box.innerHTML = '<p class="qr-fail">QR code could not load. Use the link below.</p>';
+    }
+    lastBtn = btn;
+    overlay.hidden = false;
+    document.getElementById('qrClose').focus();
+  }
+  function closeQR() {
+    overlay.hidden = true;
+    if (lastBtn) lastBtn.focus();
+  }
+
+  document.querySelectorAll('.qr-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const tile = btn.closest('.tile');
+      if (tile) {
+        const link = tile.querySelector('.tile-link');
+        openQR(link.getAttribute('href'), tile.querySelector('h2').textContent, btn);
+      } else {
+        openQR(btn.dataset.url, btn.dataset.name, btn);
+      }
+    });
+  });
+  document.getElementById('qrClose').addEventListener('click', closeQR);
+  overlay.addEventListener('click', e => { if (e.target === overlay) closeQR(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && !overlay.hidden) closeQR(); });
+</script>
 </body>
 </html>

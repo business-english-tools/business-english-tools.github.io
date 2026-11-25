@@ -26,7 +26,13 @@
   }
   .wrap { max-width: 60rem; margin: 0 auto; padding: 2.25rem 1.1rem 2.5rem; }
 
-  header { margin-bottom: 1.75rem; }
+  header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.75rem;
+  }
   header h1 {
     margin: 0 0 .35rem;
     font-size: clamp(1.55rem, 5vw, 2.1rem);
@@ -46,25 +52,30 @@
   .tile {
     --accent: var(--teal);
     position: relative;
+    background: var(--tile);
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    transition: background .15s ease, transform .15s ease, border-color .15s ease;
+  }
+  .tile:hover, .tile:focus-within {
+    background: var(--tile-hover);
+    border-color: color-mix(in srgb, var(--accent) 45%, var(--line));
+    transform: translateY(-2px);
+  }
+  .tile:active { transform: scale(.98); }
+  .tile-link {
     display: flex;
     flex-direction: column;
     gap: .7rem;
     min-height: 9.5rem;
+    height: 100%;
     padding: 1.1rem 1rem 1rem;
-    background: var(--tile);
-    border: 1px solid var(--line);
-    border-radius: 20px;
     color: var(--text);
     text-decoration: none;
-    transition: background .15s ease, transform .15s ease, border-color .15s ease;
-  }
-  a.tile:hover, a.tile:focus-visible {
-    background: var(--tile-hover);
-    border-color: color-mix(in srgb, var(--accent) 45%, var(--line));
-    transform: translateY(-2px);
+    border-radius: 20px;
     outline: none;
   }
-  a.tile:active { transform: scale(.98); }
+  .tile-link:focus-visible { box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 60%, transparent); }
 
   .icon {
     width: 3rem; height: 3rem;
@@ -73,12 +84,9 @@
     border-radius: 14px;
     background: color-mix(in srgb, var(--accent) 18%, transparent);
   }
-  .tile h2 { margin: 0; font-size: 1.02rem; font-weight: 650; line-height: 1.25; }
+  .tile h2 { margin: 0; padding-right: 1.6rem; font-size: 1.02rem; font-weight: 650; line-height: 1.25; }
   .tile p { margin: 0; font-size: .85rem; color: var(--muted); }
 
-  .tile.soon { border-style: dashed; background: transparent; }
-  .tile.soon .icon { background: #23262d; filter: grayscale(1); opacity: .6; }
-  .tile.soon h2 { color: var(--muted); }
 
   .teal  { --accent: var(--teal); }
   .amber { --accent: var(--amber); }
@@ -88,5 +96,83 @@
   .sky   { --accent: var(--sky); }
 
   footer { margin-top: 2rem; text-align: center; color: var(--muted); font-size: .8rem; }
+
+  /* QR buttons */
+  .qr-btn {
+    font: inherit;
+    cursor: pointer;
+    border: 1px solid var(--line);
+    background: #1b1e24;
+    color: var(--muted);
+    border-radius: 12px;
+    line-height: 1;
+  }
+  .qr-btn:hover, .qr-btn:focus-visible { color: var(--text); border-color: var(--muted); outline: none; }
+  .tile .qr-btn {
+    position: absolute;
+    top: .7rem;
+    right: .7rem;
+    width: 2.4rem;
+    height: 2.4rem;
+    font-size: 1.15rem;
+  }
+  .qr-btn.hub {
+    flex-shrink: 0;
+    padding: .65rem .9rem;
+    font-size: 1rem;
+    display: inline-flex;
+    gap: .4rem;
+    align-items: center;
+  }
+  .qr-btn.hub span { font-size: .85rem; font-weight: 600; letter-spacing: .05em; }
+  .qr-inline { color: var(--text); }
+
+  /* QR pop-up */
+  .qr-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    display: grid;
+    place-items: center;
+    padding: 1.25rem;
+    background: rgba(8, 9, 12, .82);
+  }
+  .qr-overlay[hidden] { display: none; }
+  .qr-card {
+    position: relative;
+    width: min(92vw, 30rem);
+    background: var(--tile);
+    border: 1px solid var(--line);
+    border-radius: 24px;
+    padding: 1.5rem 1.25rem 1.25rem;
+    text-align: center;
+  }
+  .qr-card h2 { margin: 0 2.5rem 1rem; font-size: 1.3rem; }
+  .qr-box {
+    background: #f4f2ec;   /* light square so phones can scan it */
+    border-radius: 16px;
+    padding: .75rem;
+    width: min(100%, 70vh);
+    margin: 0 auto;
+    aspect-ratio: 1;
+  }
+  .qr-box svg { display: block; width: 100%; height: 100%; }
+  .qr-url { margin: .9rem 0 .2rem; font-size: .9rem; color: var(--text); word-break: break-all; }
+  .qr-tip { margin: 0; font-size: .8rem; color: var(--muted); }
+  .qr-fail { color: #1f2a37; padding: 2rem 1rem; margin: 0; }
+  .qr-close {
+    position: absolute;
+    top: .75rem;
+    right: .75rem;
+    width: 2.4rem;
+    height: 2.4rem;
+    border-radius: 50%;
+    border: 1px solid var(--line);
+    background: transparent;
+    color: var(--muted);
+    font-size: 1rem;
+    cursor: pointer;
+  }
+  .qr-close:hover, .qr-close:focus-visible { color: var(--text); border-color: var(--muted); outline: none; }
 
   @media (prefers-reduced-motion: reduce) { .tile { transition: none; } }
