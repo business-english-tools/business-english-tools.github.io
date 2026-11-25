@@ -1,12 +1,31 @@
 /* SLIDE LIST
-   To add a presentation: put its slide images (01.webp, 02.webp ...) in a new folder
-   inside "slides", then add one line below. type "deck" = slideshow, "doc" = handout/page to scroll. */
+   SETS: the coloured groups on the Slides page (one colour per topic).
+   DECKS: one line per presentation. Put its slide images (01.webp, 02.webp ...) in a folder
+   with the same name as "id", inside the "slides" folder.
+   type "deck" = slideshow, "doc" = handout to scroll. */
+const SETS = [
+  { id: "opinions",  name: "Opinions",               color: "teal"  },
+  { id: "company",   name: "Company & Small Talk",   color: "amber" },
+  { id: "problems",  name: "Business Problems",      color: "rose"  },
+];
+
 const DECKS = [
-  { id: "whats-your-taste",         title: "What's Your Taste?",  desc: "Likes, dislikes and asking for opinions", icon: "👍", color: "teal",  count: 15, type: "deck" },
-  { id: "present-vs-past-opinions", title: "Now or Before?",      desc: "Opinions in the present and the past",    icon: "⏰", color: "amber", count: 11, type: "deck" },
-  { id: "adjectives-how-was-it",    title: "How Was It?",         desc: "Adjectives for things and feelings",      icon: "🤩", color: "rose",  count: 15, type: "deck" },
-  { id: "opinions-handout",         title: "Opinions Handout",    desc: "Summary and practice for the three presentations above", icon: "📄", color: "sage",  count: 1,  type: "doc" },
-  { id: "small-talk-warm-up",       title: "Small Talk",          desc: "Before and after a business meeting",     icon: "💬", color: "sky",   count: 8,  type: "deck" },
-  { id: "company-background",       title: "Company Background",  desc: "Describe your company: years, numbers, trade words", icon: "🏢", color: "lilac", count: 13, type: "deck" },
-  { id: "company-profile",          title: "Company Profile",     desc: "Handout: Hoa Sen Home fact file and practice", icon: "📄", color: "sage",  count: 2,  type: "doc" },
+  // Opinions
+  { set: "opinions", id: "whats-your-taste",         title: "What's Your Taste?",    desc: "Likes, dislikes and asking for opinions",          icon: "👍", count: 15, type: "deck" },
+  { set: "opinions", id: "present-vs-past-opinions", title: "Now or Before?",        desc: "Opinions in the present and the past",             icon: "⏰", count: 11, type: "deck" },
+  { set: "opinions", id: "adjectives-how-was-it",    title: "How Was It?",           desc: "Adjectives for things and feelings",               icon: "🤩", count: 15, type: "deck" },
+  { set: "opinions", id: "opinions-handout",         title: "Opinions Handout",      desc: "Summary and practice for this set",                icon: "📄", count: 1,  type: "doc"  },
+
+  // Company & Small Talk
+  { set: "company",  id: "small-talk-warm-up",       title: "Small Talk",            desc: "Before and after a business meeting",              icon: "💬", count: 8,  type: "deck" },
+  { set: "company",  id: "company-background",       title: "Company Background",    desc: "Describe your company: years, numbers, trade words", icon: "🏢", count: 13, type: "deck" },
+  { set: "company",  id: "company-profile",          title: "Company Profile",       desc: "Hoa Sen Home fact file and practice",              icon: "📄", count: 2,  type: "doc"  },
+
+  // Business Problems
+  { set: "problems", id: "problems-vocabulary",      title: "Problems Vocabulary",   desc: "Eight common problems at work",                    icon: "🧩", count: 6,  type: "deck" },
+  { set: "problems", id: "problems-ideas-bank",      title: "Ideas Bank",            desc: "A problem at work? What can you do?",              icon: "💡", count: 14, type: "deck" },
+  { set: "problems", id: "problems-group-work",      title: "Problems at Work",      desc: "Ask, suggest, accept and reject in groups",        icon: "👥", count: 18, type: "deck" },
+  { set: "problems", id: "polite-suggestions",       title: "Strong or Soft?",       desc: "Polite suggestions for partners",                  icon: "🤝", count: 15, type: "deck" },
+  { set: "problems", id: "phone-help-phrases",       title: "Help! I Don't Understand", desc: "Useful phrases for phone calls",              icon: "📞", count: 4,  type: "deck" },
+  { set: "problems", id: "problem-solvers",          title: "Problem Solvers",       desc: "Team game: your problem, your team's best idea",   icon: "🏆", count: 5,  type: "deck" },
 ];

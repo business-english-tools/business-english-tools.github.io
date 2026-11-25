@@ -20,20 +20,31 @@
       <p>Tap a presentation to view it.</p>
     </div>
   </header>
-  <main class="grid" id="deckGrid"></main>
+  <nav class="set-nav" id="setNav" aria-label="Topics"></nav>
+  <main id="sets"></main>
 </div>
 <script src="decks.js"></script>
 <script>
-  const grid = document.getElementById('deckGrid');
-  grid.innerHTML = DECKS.map(d => `
-    <div class="tile ${d.color}">
+  const card = d => `
+    <div class="tile">
       <a class="tile-link" href="viewer.html?deck=${d.id}">
         <span class="thumb"><img src="${d.id}/01.webp" alt="" loading="lazy" draggable="false"></span>
         <h2>${d.icon} ${d.title}</h2>
         <p>${d.desc}</p>
         <small class="count">${d.type === 'doc' ? 'Handout' : d.count + ' slides'}</small>
       </a>
-    </div>`).join('');
+    </div>`;
+  const used = SETS.filter(s => DECKS.some(d => d.set === s.id));
+  document.getElementById('setNav').innerHTML = used.map(s =>
+    `<a class="set-chip ${s.color}" href="#set-${s.id}">${s.name}</a>`).join('');
+  document.getElementById('sets').innerHTML = used.map(s => {
+    const decks = DECKS.filter(d => d.set === s.id);
+    return `
+    <section class="set ${s.color}" id="set-${s.id}">
+      <h2 class="set-head"><span class="set-bar"></span>${s.name}<small>${decks.length}</small></h2>
+      <div class="grid">${decks.map(card).join('')}</div>
+    </section>`;
+  }).join('');
   document.addEventListener('contextmenu', e => { if (e.target.tagName === 'IMG') e.preventDefault(); });
 </script>
 </body>
