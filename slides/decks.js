@@ -7,6 +7,7 @@ const SETS = [
   { id: "opinions",  name: "Opinions",               color: "teal"  },
   { id: "company",   name: "Company & Small Talk",   color: "amber" },
   { id: "problems",  name: "Business Problems",      color: "rose"  },
+  { id: "advice",    name: "Giving Advice",          color: "lilac" },
 ];
 
 const DECKS = [
@@ -28,4 +29,10 @@ const DECKS = [
   { set: "problems", id: "polite-suggestions",       title: "Strong or Soft?",       desc: "Polite suggestions for partners",                  icon: "🤝", count: 15, type: "deck" },
   { set: "problems", id: "phone-help-phrases",       title: "Help! I Don't Understand", desc: "Useful phrases for phone calls",              icon: "📞", count: 4,  type: "deck" },
   { set: "problems", id: "problem-solvers",          title: "Problem Solvers",       desc: "Team game: your problem, your team's best idea",   icon: "🏆", count: 5,  type: "deck" },
+
+  // Giving Advice
+  { set: "advice",   id: "strong-or-polite-advice",  title: "Strong or Polite?",     desc: "Advice for your boss, your team and your partners", icon: "🗨️", count: 18, type: "deck" },
+  { set: "advice",   id: "advice-problem-cards",     title: "Advice Problem Cards",  desc: "12 problem cards and language strips to cut out",  icon: "🃏", count: 3,  type: "doc"  },
+  { set: "advice",   id: "welcome-to-hcmc",          title: "Welcome to Ho Chi Minh City!", desc: "Mingle: give a visitor advice about the city", icon: "✈️", count: 15, type: "deck" },
+  { set: "advice",   id: "visitor-advice-worksheet", title: "Visitor Worksheet",     desc: "Worksheet for Welcome to Ho Chi Minh City!",       icon: "📄", count: 2,  type: "doc"  },
 ];
