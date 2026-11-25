@@ -8,6 +8,7 @@ const SETS = [
   { id: "company",   name: "Company & Small Talk",   color: "amber" },
   { id: "problems",  name: "Business Problems",      color: "rose"  },
   { id: "advice",    name: "Giving Advice",          color: "lilac" },
+  { id: "calls",     name: "Conversations & Calls",  color: "sky"   },
 ];
 
 const DECKS = [
@@ -35,4 +36,10 @@ const DECKS = [
   { set: "advice",   id: "advice-problem-cards",     title: "Advice Problem Cards",  desc: "12 problem cards and language strips to cut out",  icon: "🃏", count: 3,  type: "doc"  },
   { set: "advice",   id: "welcome-to-hcmc",          title: "Welcome to Ho Chi Minh City!", desc: "Mingle: give a visitor advice about the city", icon: "✈️", count: 15, type: "deck" },
   { set: "advice",   id: "visitor-advice-worksheet", title: "Visitor Worksheet",     desc: "Worksheet for Welcome to Ho Chi Minh City!",       icon: "📄", count: 2,  type: "doc"  },
+
+  // Conversations & Calls
+  { set: "calls",    id: "formal-informal-game",          title: "Formal or Informal?",     desc: "The conversation game: two rounds in teams",   icon: "🎩", count: 29, type: "deck" },
+  { set: "calls",    id: "formal-informal-conversations", title: "Formal & Informal Phrases", desc: "Handout: start, continue and end a conversation", icon: "📄", count: 2,  type: "doc"  },
+  { set: "calls",    id: "call-buttons-game",             title: "What Is It?",             desc: "Game: online call buttons and what to say",    icon: "🎙️", count: 16, type: "deck" },
+  { set: "calls",    id: "online-calls",                  title: "Online Calls",            desc: "Start, manage and end an online call",         icon: "💻", count: 11, type: "deck" },
 ];
