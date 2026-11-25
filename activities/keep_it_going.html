@@ -1,0 +1,327 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>body{margin:0}[hidden]{display:none!important}img{max-width:100%}</style>
+<title>Keep It Going</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&display=swap">
+<style>
+/* Layout: a projected classroom page. Speech-bubble motif; teach top to bottom, then play in the timer zone. Single light look for projectors. */
+:root {
+  --ink: #18214D;
+  --ink-soft: #4A5480;
+  --paper: #FFFFFF;
+  --mist: #EEF0F8;
+  --sun: #F5BE0B;
+  --sun-soft: #FFF3C2;
+  --stop: #D8483B;
+  --go: #2C9A5C;
+  --display: "Bricolage Grotesque", "Arial Black", Arial, sans-serif;
+  --body: "Atkinson Hyperlegible", Verdana, Arial, sans-serif;
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--body);
+  font-size: clamp(17px, 1.5vw, 21px);
+  line-height: 1.5;
+}
+.wrap {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 2rem 4rem;
+  display: grid;
+  gap: 3.5rem;
+}
+h1, h2, h3 { font-family: var(--display); text-wrap: balance; margin: 0; line-height: 1.05; }
+h2 { font-size: clamp(1.7rem, 3.2vw, 2.4rem); font-weight: 800; }
+h3 { font-size: 1.25rem; font-weight: 800; }
+p { margin: 0; }
+.eyebrow {
+  font-family: var(--display); font-weight: 600; text-transform: uppercase;
+  letter-spacing: 0.12em; font-size: 0.8rem; color: var(--ink-soft);
+}
+section { display: grid; gap: 1.25rem; }
+
+/* Hero */
+.hero { display: grid; grid-template-columns: 1.3fr 1fr; gap: 2rem; align-items: center; }
+.hero h1 { font-size: clamp(3rem, 8vw, 6rem); font-weight: 800; letter-spacing: -0.02em; }
+.hero h1 span { background: var(--sun); padding: 0 0.15em; border-radius: 0.15em; }
+.hero .lede { font-size: 1.3em; color: var(--ink-soft); max-width: 30ch; margin-top: 1rem; }
+.art { width: 100%; max-width: 440px; height: auto; justify-self: center; }
+.bubble {
+  position: relative; padding: 0.8rem 1.1rem; border-radius: 1.2rem;
+  font-weight: 700; font-size: 1.1em; max-width: 85%;
+}
+.bubble.a { background: var(--mist); justify-self: start; border-bottom-left-radius: 0.3rem; }
+.bubble.b { background: var(--sun-soft); justify-self: end; border-bottom-right-radius: 0.3rem; }
+.bubble .who { display: block; font-size: 0.7em; font-weight: 400; color: var(--ink-soft); }
+
+/* Dead vs alive */
+.compare { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+.convo { border-radius: 1.2rem; padding: 1.4rem; display: grid; gap: 0.7rem; align-content: start; }
+.convo.dead { background: var(--mist); }
+.convo.alive { background: var(--sun-soft); }
+.convo h3 { display: flex; align-items: center; gap: 0.5rem; }
+.tag { font-family: var(--body); font-size: 0.75rem; font-weight: 700; padding: 0.2rem 0.6rem; border-radius: 99px; color: var(--paper); }
+.dead .tag { background: var(--stop); }
+.alive .tag { background: var(--go); }
+.line { display: grid; grid-template-columns: 1.6rem 1fr; gap: 0.4rem; }
+.line b { color: var(--ink-soft); }
+.silence { font-style: italic; color: var(--stop); }
+mark { background: transparent; color: inherit; border-bottom: 3px solid var(--sun); font-weight: 700; }
+
+/* Tools */
+.tools { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; }
+.tool { border: 2px solid var(--ink); border-radius: 1.2rem; padding: 1.3rem; display: grid; gap: 0.6rem; align-content: start; }
+.tool .num {
+  width: 2.4rem; height: 2.4rem; border-radius: 50%; background: var(--ink); color: var(--paper);
+  display: grid; place-items: center; font-family: var(--display); font-weight: 800;
+}
+.tool .say { font-family: var(--display); font-weight: 800; font-size: 1.5rem; line-height: 1.15; }
+.tool .ex { color: var(--ink-soft); font-size: 0.95em; }
+
+/* Rules */
+.rules { list-style: none; padding: 0; margin: 0; display: grid; gap: 0.9rem; counter-reset: r; }
+.rules li { display: grid; grid-template-columns: 2.6rem 1fr; gap: 0.8rem; align-items: start; counter-increment: r; font-size: 1.1em; }
+.rules li::before {
+  content: counter(r); width: 2.2rem; height: 2.2rem; border-radius: 50%;
+  background: var(--sun); display: grid; place-items: center; font-family: var(--display); font-weight: 800;
+}
+.rules .warn::before { background: var(--stop); color: var(--paper); }
+
+/* Play zone */
+.play { background: var(--ink); color: var(--paper); border-radius: 1.8rem; padding: clamp(1.25rem, 3vw, 2.5rem); display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: center; }
+.play .eyebrow { color: var(--sun); }
+.topic-box { display: grid; gap: 1rem; min-width: 0; }
+.topic {
+  font-family: var(--display); font-weight: 800; font-size: clamp(2rem, 4.5vw, 3.2rem); line-height: 1.05;
+  background: var(--paper); color: var(--ink); padding: 1.2rem 1.4rem; border-radius: 1.4rem; border-bottom-left-radius: 0.4rem;
+  min-height: 7.5rem; display: flex; align-items: center;
+}
+.starter { color: var(--sun-soft); font-style: italic; }
+.timer { display: grid; justify-items: center; gap: 1.2rem; }
+.ring { position: relative; width: min(260px, 70vw); aspect-ratio: 1; max-width: 100%; }
+.ring svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+.ring circle { fill: none; stroke-width: 14; }
+.ring .track { stroke: var(--ink-soft); }
+.ring .bar { stroke: var(--sun); stroke-linecap: round; transition: stroke-dashoffset 0.25s linear, stroke 0.3s; }
+.ring.done .bar { stroke: var(--go); }
+.time {
+  position: absolute; inset: 0; display: grid; place-items: center;
+  font-family: var(--display); font-weight: 800; font-size: clamp(3rem, 7vw, 4.5rem);
+  font-variant-numeric: tabular-nums;
+}
+.status { font-weight: 700; min-height: 1.5em; text-align: center; color: var(--sun-soft); }
+.btns { display: flex; flex-wrap: wrap; gap: 0.7rem; justify-content: center; }
+button {
+  font: 700 1rem var(--body); border: 0; border-radius: 99px; padding: 0.75rem 1.3rem; cursor: pointer;
+  background: var(--paper); color: var(--ink);
+}
+button.primary { background: var(--sun); }
+button.danger { background: var(--stop); color: var(--paper); }
+button:hover { filter: brightness(0.94); }
+button:focus-visible { outline: 3px solid var(--sun); outline-offset: 3px; }
+
+@media (max-width: 760px) {
+  .hero, .compare, .play { grid-template-columns: 1fr; }
+  .tools { grid-template-columns: 1fr; }
+}
+@media (prefers-reduced-motion: reduce) { .ring .bar { transition: none; } }
+</style>
+</head>
+<body>
+
+<main class="wrap">
+  <header class="hero">
+    <div>
+      <p class="eyebrow">Speaking challenge · 2 minutes</p>
+      <h1>Keep it <span>going!</span></h1>
+      <p class="lede">A good conversation is like a ball game. Catch the ball, then throw it back.</p>
+    </div>
+    <svg class="art" viewBox="0 0 420 320" role="img" aria-label="Two business people talking and throwing a ball to each other">
+      <ellipse cx="210" cy="292" rx="190" ry="14" fill="#EEF0F8"/>
+      <path d="M128 150 Q210 30 292 150" fill="none" stroke="#4A5480" stroke-width="3" stroke-dasharray="4 9" stroke-linecap="round"/>
+      <path d="M282 140 l12 12 l3 -16" fill="none" stroke="#4A5480" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+      <circle cx="210" cy="62" r="20" fill="#F5BE0B"/>
+      <path d="M193 55 Q210 66 227 55 M196 74 Q210 62 224 74" fill="none" stroke="#18214D" stroke-width="2" opacity=".35"/>
+      <!-- left person -->
+      <rect x="40" y="20" width="70" height="42" rx="18" fill="#EEF0F8"/>
+      <path d="M60 62 l-6 14 l18 -14z" fill="#EEF0F8"/>
+      <circle cx="62" cy="41" r="5" fill="#18214D"/><circle cx="75" cy="41" r="5" fill="#18214D"/><circle cx="88" cy="41" r="5" fill="#18214D"/>
+      <rect x="68" y="170" width="22" height="112" rx="9" fill="#18214D"/>
+      <rect x="94" y="170" width="22" height="112" rx="9" fill="#18214D"/>
+      <path d="M60 182 Q60 120 92 116 Q124 120 124 182z" fill="#18214D"/>
+      <path d="M84 117 L92 146 L100 117z" fill="#FFFFFF"/>
+      <path d="M90 122 L92 146 L94 122z" fill="#F5BE0B"/>
+      <path d="M118 128 Q132 136 132 152" fill="none" stroke="#18214D" stroke-width="14" stroke-linecap="round"/>
+      <circle cx="132" cy="156" r="8" fill="#C68B59"/>
+      <circle cx="92" cy="92" r="22" fill="#C68B59"/>
+      <path d="M70 88 Q72 64 94 66 Q114 68 114 86 Q104 76 86 80 Q76 82 70 88z" fill="#18214D"/>
+      <rect x="64" y="276" width="28" height="10" rx="5" fill="#18214D"/><rect x="94" y="276" width="28" height="10" rx="5" fill="#18214D"/>
+      <!-- right person -->
+      <rect x="310" y="20" width="70" height="42" rx="18" fill="#FFF3C2"/>
+      <path d="M360 62 l6 14 l-18 -14z" fill="#FFF3C2"/>
+      <circle cx="332" cy="41" r="5" fill="#18214D"/><circle cx="345" cy="41" r="5" fill="#18214D"/><circle cx="358" cy="41" r="5" fill="#18214D"/>
+      <rect x="304" y="170" width="22" height="112" rx="9" fill="#4A5480"/>
+      <rect x="330" y="170" width="22" height="112" rx="9" fill="#4A5480"/>
+      <path d="M296 182 Q296 120 328 116 Q360 120 360 182z" fill="#4A5480"/>
+      <path d="M320 117 L328 140 L336 117z" fill="#FFFFFF"/>
+      <path d="M302 128 Q288 136 288 152" fill="none" stroke="#4A5480" stroke-width="14" stroke-linecap="round"/>
+      <circle cx="288" cy="156" r="8" fill="#E2B48C"/>
+      <circle cx="328" cy="92" r="22" fill="#E2B48C"/>
+      <path d="M305 94 Q300 64 328 66 Q356 64 351 94 Q350 78 336 76 Q318 76 312 84 Q308 88 305 94z" fill="#3B2A20"/>
+      <rect x="298" y="276" width="28" height="10" rx="5" fill="#18214D"/><rect x="328" y="276" width="28" height="10" rx="5" fill="#18214D"/>
+    </svg>
+  </header>
+
+  <section aria-labelledby="why">
+    <p class="eyebrow">Why?</p>
+    <h2 id="why">One-word answers stop the conversation</h2>
+    <div class="compare">
+      <div class="convo dead">
+        <h3>Conversation 1 <span class="tag">STOPPED</span></h3>
+        <div class="line"><b>A</b><span>Do you like your job?</span></div>
+        <div class="line"><b>B</b><span>Yes.</span></div>
+        <div class="line"><b></b><span class="silence">...silence...</span></div>
+        <div class="line"><b>A</b><span>OK.</span></div>
+      </div>
+      <div class="convo alive">
+        <h3>Conversation 2 <span class="tag">GOING</span></h3>
+        <div class="line"><b>A</b><span>Do you like your job?</span></div>
+        <div class="line"><b>B</b><span>Yes, I do. <mark>I work with partners from Korea.</mark> <mark>How about you?</mark></span></div>
+        <div class="line"><b>A</b><span>I like it too. I'm in Sales.</span></div>
+        <div class="line"><b>B</b><span><mark>Really? What do you sell?</mark></span></div>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="tools">
+    <p class="eyebrow">Your tools</p>
+    <h2 id="tools">Three ways to keep it going</h2>
+    <div class="tools">
+      <div class="tool">
+        <span class="num">1</span>
+        <p class="say">Add one more detail</p>
+        <p class="ex">"Yes, I do. <b>I work with partners from Korea.</b>"</p>
+      </div>
+      <div class="tool">
+        <span class="num">2</span>
+        <p class="say">And you? / How about you?</p>
+        <p class="ex">Throw the ball back to your partner.</p>
+      </div>
+      <div class="tool">
+        <span class="num">3</span>
+        <p class="say">Really? How / Why / When...?</p>
+        <p class="ex">"Really? <b>When</b> did you start?"</p>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="rules">
+    <p class="eyebrow">How to play</p>
+    <h2 id="rules">The rules</h2>
+    <ol class="rules">
+      <li>Work with a partner. Student A starts the conversation.</li>
+      <li>Talk about the topic on the screen for 2 minutes.</li>
+      <li>Use the three tools. No one-word answers!</li>
+      <li class="warn">Silence for 5 seconds? Start again from the beginning.</li>
+      <li>When the time is up, end the conversation politely. Then change partners.</li>
+    </ol>
+  </section>
+
+  <section class="play" aria-labelledby="playtitle">
+    <div class="topic-box">
+      <p class="eyebrow" id="playtitle">Your topic</p>
+      <p class="topic" id="topic" aria-live="polite">Your weekend</p>
+      <p class="starter" id="starter">Start with: "How was your weekend?"</p>
+      <div class="btns" style="justify-content:flex-start">
+        <button id="newTopic" type="button">New topic</button>
+      </div>
+    </div>
+    <div class="timer">
+      <div class="ring" id="ring">
+        <svg viewBox="0 0 120 120" aria-hidden="true">
+          <circle class="track" cx="60" cy="60" r="52"></circle>
+          <circle class="bar" id="bar" cx="60" cy="60" r="52"></circle>
+        </svg>
+        <div class="time" id="time" role="timer" aria-live="off">2:00</div>
+      </div>
+      <p class="status" id="status" aria-live="polite">Ready? Press Start.</p>
+      <div class="btns">
+        <button id="start" class="primary" type="button">Start</button>
+        <button id="silence" class="danger" type="button">Silence! Start again</button>
+        <button id="reset" type="button">Reset</button>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script>
+(() => {
+  const topics = [
+    ["Your weekend", "How was your weekend?"],
+    ["Your job", "What do you do?"],
+    ["Your hometown", "Where are you from?"],
+    ["Food in Ho Chi Minh City", "What's your favourite restaurant?"],
+    ["Your last business trip", "Have you been on a business trip recently?"],
+    ["Foreign partners", "Do you work with partners from other countries?"],
+    ["Travel", "Where did you go on your last holiday?"],
+    ["Tet holiday", "What do you usually do at Tet?"],
+    ["Football and sport", "Do you like football?"],
+    ["Your company", "What does your company do?"],
+    ["Coffee", "How many coffees do you drink a day?"],
+    ["Your plans for next weekend", "What are you doing next weekend?"],
+  ];
+  const TOTAL = 120;
+  const $ = (id) => document.getElementById(id);
+  const bar = $("bar"), timeEl = $("time"), statusEl = $("status"), ring = $("ring"), startBtn = $("start");
+  const C = 2 * Math.PI * 52;
+  bar.style.strokeDasharray = C;
+
+  let left = TOTAL, running = false, tick = null, topicIdx = 0;
+
+  const fmt = (s) => Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0");
+  function draw() {
+    timeEl.textContent = fmt(left);
+    bar.style.strokeDashoffset = C * (1 - left / TOTAL);
+    ring.classList.toggle("done", left === 0);
+  }
+  function stop() { clearInterval(tick); tick = null; running = false; startBtn.textContent = "Start"; }
+  function start() {
+    if (left === 0) left = TOTAL;
+    running = true; startBtn.textContent = "Pause";
+    statusEl.textContent = "Keep it going!";
+    tick = setInterval(() => {
+      left = Math.max(0, left - 1); draw();
+      if (left === 0) { stop(); statusEl.textContent = "Time's up! End the conversation politely."; }
+    }, 1000);
+  }
+  startBtn.addEventListener("click", () => {
+    if (running) { stop(); statusEl.textContent = "Paused."; } else start();
+  });
+  $("silence").addEventListener("click", () => {
+    stop(); left = TOTAL; draw();
+    statusEl.textContent = "Silence! Start the conversation again.";
+    start();
+  });
+  $("reset").addEventListener("click", () => { stop(); left = TOTAL; draw(); statusEl.textContent = "Ready? Press Start."; });
+  $("newTopic").addEventListener("click", () => {
+    let n; do { n = Math.floor(Math.random() * topics.length); } while (n === topicIdx);
+    topicIdx = n;
+    $("topic").textContent = topics[n][0];
+    $("starter").textContent = 'Start with: "' + topics[n][1] + '"';
+  });
+  draw();
+})();
+</script>
+</body>
+</html>
