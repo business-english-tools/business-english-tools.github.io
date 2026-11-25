@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#16181d">
+<title>Slides</title>
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../favicon.png" type="image/png">
+<link rel="apple-touch-icon" href="../favicon.png">
+<link rel="stylesheet" href="../style.css">
+<link rel="stylesheet" href="slides.css">
+</head>
+<body class="viewer-page">
+<div class="viewer" id="viewer">
+  <div class="v-top">
+    <a class="back-link" href="./">← All slides</a>
+    <h1 id="vTitle"></h1>
+    <button class="v-btn" id="fsBtn" aria-label="Full screen">⛶</button>
+  </div>
+
+  <!-- slideshow -->
+  <div class="stage" id="stage" hidden>
+    <img id="slideImg" alt="" draggable="false">
+    <button class="nav prev" id="prevBtn" aria-label="Previous slide">‹</button>
+    <button class="nav next" id="nextBtn" aria-label="Next slide">›</button>
+  </div>
+  <div class="v-bottom" id="vBottom" hidden>
+    <span id="counter"></span>
+    <div class="dots" id="dots"></div>
+  </div>
+
+  <!-- handout -->
+  <div class="doc" id="doc" hidden></div>
+</div>
+
+<script src="decks.js"></script>
+<script>
+  const params = new URLSearchParams(location.search);
+  const deck = DECKS.find(d => d.id === params.get('deck')) || DECKS[0];
+  const pad = n => String(n).padStart(2, '0');
+  const src = n => `${deck.id}/${pad(n)}.webp`;
+  document.getElementById('vTitle').textContent = deck.title;
+  document.title = deck.title + ' · Slides';
+
+  if (deck.type === 'doc') {
+    const doc = document.getElementById('doc');
+    doc.hidden = false;
+    doc.innerHTML = Array.from({length: deck.count}, (_, i) =>
+      `<img src="${src(i + 1)}" alt="${deck.title} page ${i + 1}" draggable="false">`).join('');
+  } else {
+    document.getElementById('stage').hidden = false;
+    document.getElementById('vBottom').hidden = false;
+    const img = document.getElementById('slideImg');
+    const dots = document.getElementById('dots');
+    let cur = Math.min(Math.max(parseInt(params.get('s')) || 1, 1), deck.count);
+    dots.innerHTML = Array.from({length: deck.count}, (_, i) =>
+      `<button aria-label="Slide ${i + 1}" data-n="${i + 1}"></button>`).join('');
+    dots.querySelectorAll('button').forEach(b => b.onclick = () => go(+b.dataset.n));
+
+    function go(n) {
+      cur = Math.min(Math.max(n, 1), deck.count);
+      img.src = src(cur);
+      img.alt = `${deck.title}, slide ${cur}`;
+      document.getElementById('counter').textContent = `${cur} / ${deck.count}`;
+      dots.querySelectorAll('button').forEach((b, i) => b.classList.toggle('on', i + 1 === cur));
+      document.getElementById('prevBtn').disabled = cur === 1;
+      document.getElementById('nextBtn').disabled = cur === deck.count;
+      [cur - 1, cur + 1].forEach(k => { if (k >= 1 && k <= deck.count) new Image().src = src(k); });
+      history.replaceState(null, '', `?deck=${deck.id}&s=${cur}`);
+    }
+    document.getElementById('prevBtn').onclick = () => go(cur - 1);
+    document.getElementById('nextBtn').onclick = () => go(cur + 1);
+    document.addEventListener('keydown', e => {
+      if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); go(cur + 1); }
+      if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); go(cur - 1); }
+      if (e.key === 'Home') go(1);
+      if (e.key === 'End') go(deck.count);
+    });
+    let x0 = null;
+    const stage = document.getElementById('stage');
+    stage.addEventListener('touchstart', e => { x0 = e.touches[0].clientX; }, {passive: true});
+    stage.addEventListener('touchend', e => {
+      if (x0 === null) return;
+      const dx = e.changedTouches[0].clientX - x0;
+      if (Math.abs(dx) > 40) go(cur + (dx < 0 ? 1 : -1));
+      x0 = null;
+    });
+    go(cur);
+  }
+
+  const fsBtn = document.getElementById('fsBtn');
+  const viewer = document.getElementById('viewer');
+  if (!document.fullscreenEnabled) fsBtn.hidden = true;
+  fsBtn.onclick = () => document.fullscreenElement ? document.exitFullscreen() : viewer.requestFullscreen();
+  document.addEventListener('contextmenu', e => { if (e.target.tagName === 'IMG') e.preventDefault(); });
+</script>
+</body>
+</html>
